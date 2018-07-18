@@ -6,6 +6,19 @@ import linecache
 
 FACE_CONTOUR_LANDMARKS = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
                           12, 13, 14, 15, 16, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17]
+LEFTEYE_CONTOUR_LANDMARK=[18,19,20,21,22,40,41,42,37]
+RIGHTEYE_CONTOUR_LANDMARK=[23,24,25,26,27,46,47,48,43]
+
+
+def addEdgeLandmark(pts, img):
+    size = img.shape
+    imgHeight = size[0]-1
+    imgWidth = size[1]-1
+    halfHeight = size[0]/2
+    halfWidth = size[1]/2
+    edgeLandmark = [(0, 0), (0, halfHeight), (0, imgHeight), (halfWidth, imgHeight),
+                    (imgWidth, imgHeight), (imgWidth, halfHeight), (imgWidth, 0), (halfWidth, 0)]
+    return pts+edgeLandmark
 
 
 def readPts(ptsFilePath):
@@ -28,15 +41,16 @@ def videoToImg(videoPath, imgFolder):
     count = 0
     while True:
         success, frame = videoCapture.read()
+        # print success
         if success == False:
             break
         imgPath = '{}/{}_{}.png'.format(imgFolder,
                                         videoPath.split('/')[-1].split('.')[0], count)
-        print 'processing {}'.format(str(count))
+        print 'processing {}'.format(imgPath)
         cv2.imwrite(imgPath, frame)
         count = count+1
-        if cv2.waitKey(100) & 0xFF == ord('q'):
-            break
+        # if cv2.waitKey(100) & 0xFF == ord('q'):
+        #     break
 
 
 def video_to_image(mp4_file, mp4_dir, trans_file, param):
@@ -114,9 +128,9 @@ def applyAffineTransform(src, srcTri, dstTri, size):
     return dst
 
 
-def readPoints(ptsPath, contour=False):
+def readPoints(ptsPath, contour=None):
     points = []
-    if contour == True:
+    if contour == 'FACE_CONTOUR_LANDMARKS':
         count = 0
         for landmark in FACE_CONTOUR_LANDMARKS:
             x, y = linecache.getline(ptsPath, landmark+1).split()

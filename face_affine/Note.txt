@@ -6,3 +6,16 @@
 
 *** exp02:
 1️⃣ headpose.py 
+操作：训练左转右转15°，低头30°，neutral，得到四个meanShape。得到左转右转点头的trumpShape。
+delta=headWeights-neutralWeights。
+trumpShape=trumpMeanShape+U·(trumpWeights+delta)
+2️⃣ 把addEdgeLandmark()放到generate_landmark.py里面了，以后生成的landmark.txt后面会自动加上图像边缘八个点。
+3️⃣ trump_headpose.py
+对于1️⃣headpose.py得到的trumpShape，应用在一系列81张trump图片上。得到81张左转、右转、低头的图片。但是效果很差。
+
+*** exp03:
+1️⃣ faceBox.py
+现在的一共有三种morph：1. 对整张图片morph，背景也会变动。2. 对人脸morph，只有脸部会动，不自然，不能转头。3. 对扩大的人脸框morph。
+faceBox.py的作用是morph人脸框，山寨talkingphoto
+2️⃣ talkingphoto.py
+一张trump送入talkingphoto APP得到视频。提取所有帧，以及所有帧的关键点。应用在输入的trump图片上。山寨talkingphoto。

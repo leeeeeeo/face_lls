@@ -5,17 +5,6 @@ from face_affine_utils import *
 from face_affine import *
 
 
-def addEdgeLandmark(pts, img):
-    size = img.shape
-    imgHeight = size[0]-1
-    imgWidth = size[1]-1
-    halfHeight = size[0]/2
-    halfWidth = size[1]/2
-    edgeLandmark = [(0, 0), (0, halfHeight), (0, imgHeight), (halfWidth, imgHeight),
-                    (imgWidth, imgHeight), (imgWidth, halfHeight), (imgWidth, 0), (halfWidth, 0)]
-    return pts+edgeLandmark
-
-
 def mainTrump():
     imgFolder = './data/trump/trump'
     triTxtPath = './data/source/mytri.txt'
@@ -33,10 +22,12 @@ def mainTrump():
             ptsTarget = readPoints(
                 '{}/{}_smile.txt'.format(imgFolder, imgName.split('.')[0]))
             ptsContour = readPoints(
-                '{}/{}_smile.txt'.format(imgFolder, imgName.split('.')[0]), contour=True)
+                '{}/{}_smile.txt'.format(imgFolder, imgName.split('.')[0]), contour='FACE_CONTOUR_LANDMARKS')
+            # print ptsOriginal
             ptsOriginal = addEdgeLandmark(ptsOriginal, img)
+            # print ptsOriginal
             ptsTarget = addEdgeLandmark(ptsTarget, img)
-            addEdgeLandmark(ptsOriginal, img)
+            # addEdgeLandmark(ptsOriginal, img)
             '''morph entire image'''
             imgMorph = morph(ptsOriginal, ptsTarget,
                              img, triTxtPath)

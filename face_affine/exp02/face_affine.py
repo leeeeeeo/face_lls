@@ -20,13 +20,11 @@ def saveTriangleTxt(triangleTxtPath, imgOriginal, ptsOriginalPath):
     myTriTxt.close()
 
 
-def changeExpression(imgOriginalPath, ptsOriginalPath, ptsTargetPath, triTxtPath, imgOriginal):
-    ptsOriginal = readPoints(ptsOriginalPath)
-    ptsTarget = readPoints(ptsTargetPath)
+def changeExpression(imgOriginalPath, ptsOriginal, ptsTarget, triTxtPath, imgOriginal):
     step = 50
     ptsOld = []
-    videoWriter = cv2.VideoWriter('./source/{}TO{}.mp4'.format(imgOriginalPath.split('.')[1].split('_')[1], ptsTargetPath.split(
-        '.')[1].split('_')[1]), cv2.VideoWriter_fourcc(*'mp4v'), 10, (imgOriginal.shape[1], imgOriginal.shape[0]))
+    # videoWriter = cv2.VideoWriter('./source/{}TO{}.mp4'.format(imgOriginalPath.split('.')[1].split('_')[1], ptsTargetPath.split(
+    #     '.')[1].split('_')[1]), cv2.VideoWriter_fourcc(*'mp4v'), 10, (imgOriginal.shape[1], imgOriginal.shape[0]))
     for pt in ptsOriginal:
         ptsOld.append((float(pt[0]), float(pt[1])))
     for i in range(step+1):
@@ -41,7 +39,7 @@ def changeExpression(imgOriginalPath, ptsOriginalPath, ptsTargetPath, triTxtPath
         imgMorphTmp = morphChange(ptsOriginal, ptsTmp, imgOriginal, triTxtPath)
         ptsOld = ptsTmp
         cv2.imshow("Morphed Face Tmp", np.uint8(imgMorphTmp))
-        videoWriter.write(imgMorphTmp)
+        # videoWriter.write(imgMorphTmp)
         if i == 50:
             cv2.waitKey(0)
         else:
@@ -104,28 +102,24 @@ def mainAffine():
     cv2.imshow("Original Face", np.uint8(imgOriginal))
     ptsOriginal = readPoints(ptsOriginalPath)
     ptsTarget = readPoints(ptsTargetPath)
-    ptsContour = readPoints(ptsTargetPath, contour=True)
-    '''
-    save mytri.txt
-    '''
+    # ptsOriginal = addEdgeLandmark(ptsOriginal, imgOriginal)
+    # ptsTarget = addEdgeLandmark(ptsTarget, imgOriginal)
+    ptsContour = readPoints(ptsTargetPath, contour='FACE_CONTOUR_LANDMARKS')
+
+    '''save mytri.txt'''
     # saveTriangleTxt(triTxtPath,imgOriginal,ptsOriginalPath)
-    '''
-    morph from one expression to another
-    '''
+    '''morph from one expression to another'''
     imgMorph = morph(ptsOriginal, ptsTarget, imgOriginal, triTxtPath)
     cv2.imshow("Morphed Face", np.uint8(imgMorph))
-    '''
-    makeup face area mask
-    '''
+    cv2.waitKey(0)
+    '''makeup face area mask'''
     maskContour, imgRecover = recoverMask(ptsContour, imgOriginal, imgMorph)
     cv2.imshow('maskContour', maskContour)
     cv2.imshow("Recoverd Face", np.uint8(imgRecover))
-    '''
-    change original expression to target expression in 50 iters
-    '''
-    changeExpression(imgOriginalPath, ptsOriginalPath,
-                     ptsTargetPath, triTxtPath, imgOriginal)
-
+    cv2.waitKey(0)
+    '''change original expression to target expression in 50 iters'''
+    changeExpression(imgOriginalPath, ptsOriginal,
+                     ptsTarget, triTxtPath, imgOriginal)
     cv2.waitKey(0)
 
 
