@@ -8,38 +8,31 @@ import time
 
 
 def mainTalkingPhoto():
-    outputFolder = './output/talkingphoto_zyl_{}'.format(
+    imgNames = []
+    outputFolder = './output/talkingphoto/talkingphoto_{}'.format(
         time.strftime("%d%H%M", time.localtime()))
     if not os.path.exists(outputFolder):
         os.mkdir(outputFolder)
-    trumpImgPath = "/Users/lls/Library/Containers/com.tencent.WeWorkMac/Data/Library/Application Support/WXWork/Data/1688850987389419/Cache/File/2018-07/smile 6/smile.jpg"
+    trumpImgPath = './data/talkingphoto/crop640.png'
     trumpImg = cv2.imread(trumpImgPath)
-    width = trumpImg.shape[0]
-    height = trumpImg.shape[1]
     eightEdgePoints, faceRect, maskRect = faceBoundingbox(trumpImg)
     # cv2.imshow('a', faceRect)
     # cv2.waitKey(0)
-    targetFolder = "/Users/lls/Library/Containers/com.tencent.WeWorkMac/Data/Library/Application Support/WXWork/Data/1688850987389419/Cache/File/2018-07/reconstruct 2"
+    targetFolder = './data/talkingphoto/IMG_2294_buffer'
     triTxtPath = './data/source/mytri.txt'
     videoWriter = cv2.VideoWriter(
-        '{}/talkingphoto.mp4'.format(outputFolder), cv2.VideoWriter_fourcc(*'mp4v'), 25, (height, width))
+        '{}/talkingphoto.mp4'.format(outputFolder), cv2.VideoWriter_fourcc(*'mp4v'), 25, (640, 640))
     ptsOriginal = readPoints('{}.txt'.format(trumpImgPath))
-    imgNames = []
-    for root, folder, files in os.walk(targetFolder):
-        for fileName in files:
-            if fileName.endswith('.txt'):
-                imgNames.append(fileName)
-    imgNames = natsorted(imgNames)
+    imgNames = natsortFolder(targetFolder)
     for imgName in imgNames:
         print imgName
-        ptsTarget = readPoints('{}/{}'.format(targetFolder, imgName))
+        ptsTarget = readPoints('{}/{}.txt'.format(targetFolder, imgName))
         imgMorph = morph(ptsOriginal, ptsTarget, trumpImg, triTxtPath)
 
         imgMorph = trumpImg*(1-maskRect)+imgMorph*maskRect
         drawLandmark(imgMorph)
         drawLandmark(imgMorph, targetPoints=ptsTarget)
-        cv2.imwrite('{}/{}.jpg'.format(outputFolder,
-                                       imgName.split('.')[0]), imgMorph)
+        cv2.imwrite('{}/{}'.format(outputFolder, imgName), imgMorph)
         cv2.imshow('a', imgMorph)
         # cv2.waitKey(0)
         videoWriter.write(imgMorph)

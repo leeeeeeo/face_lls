@@ -8,7 +8,7 @@ import time
 
 
 def mainTalkingPhoto():
-    outputFolder = './output/talkingphoto_zyl_{}'.format(
+    outputFolder = './output/talkingphoto/talkingphoto_zyl_{}'.format(
         time.strftime("%d%H%M", time.localtime()))
     if not os.path.exists(outputFolder):
         os.mkdir(outputFolder)
@@ -19,7 +19,7 @@ def mainTalkingPhoto():
     eightEdgePoints, faceRect, maskRect = faceBoundingbox(trumpImg)
     # cv2.imshow('a', faceRect)
     # cv2.waitKey(0)
-    targetFolder = "/Users/lls/Library/Containers/com.tencent.WeWorkMac/Data/Library/Application Support/WXWork/Data/1688850987389419/Cache/File/2018-07/reconstruct 2"
+    targetFolder = "/Users/lls/Library/Containers/com.tencent.WeWorkMac/Data/Library/Application Support/WXWork/Data/1688850987389419/Cache/File/2018-07/reconstruct 4"
     triTxtPath = './data/source/mytri.txt'
     videoWriter = cv2.VideoWriter(
         '{}/talkingphoto.mp4'.format(outputFolder), cv2.VideoWriter_fourcc(*'mp4v'), 25, (height, width))

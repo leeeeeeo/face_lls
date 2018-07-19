@@ -4,7 +4,6 @@ import numpy as np
 import os
 from face_affine_utils import *
 from faceBox import *
-from generate_landmark_for_TALKINGPHOTO import landmarkBuffer
 
 
 def shape_to_list(shape, dtype="int"):
@@ -37,18 +36,30 @@ def landmark_detection(face, filePath, edgeOption=None):
     return shape
 
 
-def saveTxt(filePath, landmark):
+def saveOneLandmarkToTxt(filePath, landmark):
     landmark_txt = open('{}.txt'.format(filePath), 'w')
     for (x, y) in landmark:
         landmark_txt.write(str('{} {}\n'.format(x, y)))
     landmark_txt.close()
 
 
-def saveTxtforTXT(filePath, landmark):
-    landmark_txt = open(filePath, 'w')
-    for (x, y) in landmark:
-        landmark_txt.write(str('{} {}\n'.format(x, y)))
-    landmark_txt.close()
+def landmarkBuffer(allLandmarkList):
+    '''LIST TO NUMPY'''
+    allLandmarkNumpy = []
+    for landmark in allLandmarkList:
+        allLandmarkNumpy.append(np.array(landmark))
+    '''MEAN'''
+    tmpMean = []
+    tmpMean.append(allLandmarkNumpy[0])
+    for i in range(1, len(allLandmarkList)-1):
+        tmpMean.append(
+            (allLandmarkNumpy[i-1]+allLandmarkNumpy[i]+allLandmarkNumpy[i+1])/3.0)
+    tmpMean.append(allLandmarkNumpy[-1])
+    '''FINAL LANDMARK'''
+    finalLandmarkList = []
+    for landmark in tmpMean:
+        finalLandmarkList.append(landmark.tolist())
+    return finalLandmarkList
 
 
 if __name__ == "__main__":
@@ -58,31 +69,33 @@ if __name__ == "__main__":
     edgeOption = ['fullImg', 'faceArea']
 
     '''1. generate 68+8 landmarks for original image crop640.png'''
-    filePath = "/Users/lls/Library/Containers/com.tencent.WeWorkMac/Data/Library/Application Support/WXWork/Data/1688850987389419/Cache/File/2018-07/smile 6/smile.jpg"
+    filePath = '/Users/lls/Documents/face/data/talkingphoto/crop640.png'
     face = cv2.imread(filePath)
     landmark = landmark_detection(face, filePath, edgeOption=edgeOption[1])
-    saveTxt(filePath, landmark)
+    saveOneLandmarkToTxt(filePath, landmark)
     eightEdgePoints, faceRect, maskRect = faceBoundingbox(face)
-    '''2. add 8 landmarks of original image'''
+    '''2. generate 68 landmarks for target images'''
+    '''3. add 8 landmarks of original image'''
     allLandmarkList = []
     fileList = []
-    for root, folder, files in os.walk("/Users/lls/Library/Containers/com.tencent.WeWorkMac/Data/Library/Application Support/WXWork/Data/1688850987389419/Cache/File/2018-07/reconstruct 2"):
+    for root, folder, files in os.walk('./data/talkingphoto/IMG_2294_buffer'):
         for file in files:
             filePath = '{}/{}'.format(root, file)
-            if filePath.endswith('txt'):
+            if filePath.endswith('png') or filePath.endswith('jpg'):
                 fileList.append(filePath)
     fileList = natsorted(fileList)
     for filePath in fileList:
         print filePath
-        landmark = readPoints(filePath)
+        face = cv2.imread(filePath)
+        landmark = landmark_detection(face, filePath)
         landmark = landmark+eightEdgePoints
         allLandmarkList.append(landmark)
-        # saveTxtforTXT(filePath, landmark)
-    '''3. bufferx3 landmarks, L[2]=(L[1]+L[2]+L[3])/3'''
+        # saveOneLandmarkToTxt(filePath, landmark)
+    '''4. bufferx3 landmarks, L[2]=(L[1]+L[2]+L[3])/3'''
     landmark = landmarkBuffer(allLandmarkList)
-    '''4. save all landmark txt'''
+    '''5. save all landmark txt'''
     for i in range(len(landmark)):
-        txtPath = fileList[i]
+        txtPath = '{}.txt'.format(fileList[i])
         print txtPath
         landmark_txt = open(txtPath, 'w')
         for (x, y) in landmark[i]:

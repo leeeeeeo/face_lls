@@ -66,7 +66,7 @@ if __name__ == "__main__":
     '''2. add 8 landmarks of original image'''
     allLandmarkList = []
     fileList = []
-    for root, folder, files in os.walk("/Users/lls/Library/Containers/com.tencent.WeWorkMac/Data/Library/Application Support/WXWork/Data/1688850987389419/Cache/File/2018-07/reconstruct 2"):
+    for root, folder, files in os.walk("/Users/lls/Library/Containers/com.tencent.WeWorkMac/Data/Library/Application Support/WXWork/Data/1688850987389419/Cache/File/2018-07/reconstruct 4"):
         for file in files:
             filePath = '{}/{}'.format(root, file)
             if filePath.endswith('txt'):
@@ -79,7 +79,8 @@ if __name__ == "__main__":
         allLandmarkList.append(landmark)
         # saveTxtforTXT(filePath, landmark)
     '''3. bufferx3 landmarks, L[2]=(L[1]+L[2]+L[3])/3'''
-    landmark = landmarkBuffer(allLandmarkList)
+    # landmark = landmarkBuffer(allLandmarkList)
+    landmark = allLandmarkList
     '''4. save all landmark txt'''
     for i in range(len(landmark)):
         txtPath = fileList[i]
