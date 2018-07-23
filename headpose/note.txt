@@ -2,7 +2,7 @@
 test_obj.py
 解析obj文件
 将3D模型投影为2D
-点头
+点头,转头，摇头
 
 ** github/vrn-07231340 **
 可运行的VRN 2D-->3D 
