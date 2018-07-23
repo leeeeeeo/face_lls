@@ -10,9 +10,62 @@ FACE_CONTOUR_LANDMARKS = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
                           12, 13, 14, 15, 16, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17]
 LEFTEYE_CONTOUR_LANDMARK = [18, 19, 20, 21, 22, 40, 41, 42, 37]
 RIGHTEYE_CONTOUR_LANDMARK = [23, 24, 25, 26, 27, 46, 47, 48, 43]
+LEFT_FACE_WIDTH_INDICES = [0, 1, 2]
+RIGHT_FACE_WIDTH_INDICES = [14, 15, 16]
+# center eye point + left + right eye
+UPPER_FACE_HEIGHT_INDICES = [27, 36, 37,
+                             38, 39, 40, 41, 42, 43, 44, 45, 46, 47]
+BOTTOM_FACE_HEIGHT_INDICES = [31, 32, 33, 34, 35]
+CENTER_FACE_INDICES = [27, 28, 29, 30, 31, 32, 33, 34, 35]
 detector = dlib.get_frontal_face_detector()
 predictor = dlib.shape_predictor(
     '../../../tools/shape_predictor_68_face_landmarks.dat')
+
+# the general flow is to first rotate around the center of eyes
+# then normalize according face dimensions
+
+
+def calculateInvariantDims(shapeRotated):
+    pointsLeft = extractPolygonCenter(shapeRotated, LEFT_FACE_WIDTH_INDICES)
+    pointsRight = extractPolygonCenter(shapeRotated, RIGHT_FACE_WIDTH_INDICES)
+    pointsUpper = extractPolygonCenter(shapeRotated, UPPER_FACE_HEIGHT_INDICES)
+    pointsBottom = extractPolygonCenter(
+        shapeRotated, BOTTOM_FACE_HEIGHT_INDICES)
+    widthFace = pointsRight[0] - pointsLeft[0]
+    heightFace = (pointsBottom[1] - pointsUpper[1]) * 2.0    # 2 x nose height
+    ratio = float(widthFace) / float(heightFace)
+    centerX, centerY = extractPolygonCenter(shapeRotated, CENTER_FACE_INDICES)
+    faceInvariantParam = (ratio, centerX, centerY, widthFace, heightFace)
+    return faceInvariantParam
+
+
+def getNormedFaceSize(widthList, heightList):
+    widthNormed = sum(widthList)/len(widthList)
+    heightNormed = sum(heightList)/len(heightList)
+    return (widthNormed, heightNormed)
+
+
+def rotateShape(rotateMat, shapeNumpy):
+    r'''step 1: rotate the shape from dlib into an np array shape
+    rotateMat can be feed in with a (or an inverse) rotate matrix
+    shapeNumpy can be norm/unnormed all/only-lip shapes'''
+    rowNumber, columnNumber = shapeNumpy.shape
+    shapeNumpyMatForRotate = np.vstack(
+        [shapeNumpy, np.full(columnNumber, 1.0)])
+    shapeRotated = np.dot(rotateMat, shapeNumpyMatForRotate)
+    return shapeRotated
+
+
+def extractPolygon(shapeNumpy, polygonIndices):
+    points = map(lambda i: shapeNumpy[:, i], polygonIndices)
+    return list(points)
+
+
+def extractPolygonCenter(shapeNumpy, polygonIndices):
+    points = extractPolygon(shapeNumpy, polygonIndices)
+    centerX = map(lambda p: p[0], points)
+    centerY = map(lambda p: p[1], points)
+    return float(sum(centerX)) / len(centerX), float(sum(centerY)) / len(centerY)
 
 
 def natsortFolder(folder):
@@ -85,7 +138,7 @@ def videoToImg(videoPath, imgFolder):
         # print success
         if success == False:
             break
-        imgPath = '{}/{}_{}.png'.format(imgFolder,
+        imgPath = '{}/{}_{}.jpg'.format(imgFolder,
                                         videoPath.split('/')[-1].split('.')[0], count)
         print 'processing {}'.format(imgPath)
         cv2.imwrite(imgPath, frame)

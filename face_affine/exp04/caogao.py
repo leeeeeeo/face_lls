@@ -150,22 +150,26 @@
 # # cv2.waitKey(0)
 # cv2.imwrite('/Users/lls/Documents/face/data/talkingphoto/crop640.png', img)
 
-import numpy as np
-a = [[1, 2, 3], [7, 4, 9], [3, 7, 4], [1, 8, 3]]
-'''to np'''
-b = []
-for a_i in a:
-    b.append(np.array(a_i))
+# import numpy as np
+# a = [[1, 2, 3], [7, 4, 9], [3, 7, 4], [1, 8, 3]]
+# '''to np'''
+# b = []
+# for a_i in a:
+#     b.append(np.array(a_i))
 
-print b
-'''mean'''
-c = []
-c.append(b[0])
-for i in range(1, len(a)-1):
-    c.append((b[i-1]+b[i]+b[i+1])/3.0)
-c.append(b[-1])
-print c
-d = []
-for c_i in c:
-    d.append(c_i.tolist())
-print d
+# print b
+# '''mean'''
+# c = []
+# c.append(b[0])
+# for i in range(1, len(a)-1):
+#     c.append((b[i-1]+b[i]+b[i+1])/3.0)
+# c.append(b[-1])
+# print c
+# d = []
+# for c_i in c:
+#     d.append(c_i.tolist())
+# print d
+
+from face_affine_utils import *
+videoToImg('/Users/lls/Documents/face/data/talkingphoto/IMG_2294.mp4',
+           '/Users/lls/Documents/face/data/talkingphoto/IMG_2294_JPG')

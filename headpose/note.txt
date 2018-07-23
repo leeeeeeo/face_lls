@@ -1,0 +1,13 @@
+** code/exp01 **
+test_obj.py
+解析obj文件
+将3D模型投影为2D
+点头
+
+** github/vrn-07231340 **
+可运行的VRN 2D-->3D 
+1. bash run.sh
+修改CUDA_VISIBLE_DEVICES
+将examples/里的图片生成raw文件，存在output/里
+2. py raw2obj.py --image examples/scaled/trump-12.jpg --volume output/trump-12.raw --obj obj/trump-12.obj
+将raw文件转为obj文件
