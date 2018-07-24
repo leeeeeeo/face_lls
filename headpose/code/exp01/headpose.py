@@ -2,6 +2,12 @@ import os
 import cv2
 import numpy as np
 import math
+from scipy import interpolate
+import matplotlib.pyplot as plt
+import matplotlib
+matplotlib.use('TkAgg')
+import pylab as pl
+import matplotlib as mpl
 
 
 def findTurnCenter(objLines, turnCenterMode):
@@ -259,8 +265,8 @@ def maxminXYZ(objLines):
 
 
 def rotateYZPlane(ptY, ptZ, center, angle):
-    imgWidth = 500
-    imgHeight = 500
+    imgWidth = 192
+    imgHeight = 192
     ptY = ptY
     ptZ = imgHeight-ptZ
     centerY = center[0]
@@ -313,32 +319,114 @@ def turn(objFilePath, turnAngle, turnDirection, turnCenterMode):
     return turnedObjLines
 
 
+def resizeObj(objFilePath):
+    '''read origin obj file'''
+    objLines, vLines, fLines = readObj(objFilePath)
+    '''modify obj lines'''
+    newObjLines = []
+    for objLine in objLines:
+        if objLine.split()[0] == 'v':
+            v, x, y, z, r, g, b = objLine.split()
+            x = float(x)*3
+            y = float(y)*3
+            z = float(z)*3
+            objLine = '{} {} {} {} {} {} {}'.format(
+                v, x, y, z, r, g, b)
+        newObjLines.append(objLine)
+    '''save new obj file'''
+    saveObjFile('resize', newObjLines)
+    return newObjLines
+
+
+def projectionResize(objFilePath_OR_objLines, imgPath):
+    if os.path.isfile(str(objFilePath_OR_objLines)):
+        '''read origin obj file'''
+        objLines, vLines, fLines = readObj(objFilePath)
+    else:
+        objLines = objFilePath_OR_objLines
+    '''read same image'''
+    img = cv2.imread(imgPath)
+    '''create projected image'''
+    projectedImg = np.zeros(img.shape)
+    for objLine in objLines:
+        if objLine.split()[0] == 'v':
+            v, x, y, z, r, g, b = objLine.split()
+            projectedImg[int(float(y)), int(float(x)), 0] = b
+            projectedImg[int(float(y)), int(float(x)), 1] = g
+            projectedImg[int(float(y)), int(float(x)), 2] = r
+    cv2.imshow('projectedImg', projectedImg)
+    resizedImg = cv2.resize(projectedImg, (500, 500))
+    cv2.imshow('resizedImg', resizedImg)
+    cv2.waitKey(0)
+    return projectedImg
+
+
+def scipyInterpolate(objFilePath):
+    objLines, vLines, fLines = readObj(objFilePath)
+    '''1. x,y,z -> numpy array'''
+    xArray = np.array([])
+    yArray = np.array([])
+    zArray = np.array([])
+    count = 0
+    for objLine in objLines:
+        if objLine.split()[0] == 'v':
+            count = count+1
+            if count == 20:
+                break
+            v, x, y, z, r, g, b = objLine.split()
+            xArray = np.append(xArray, float(x))
+            yArray = np.append(yArray, float(y))
+            zArray = np.append(zArray, float(z))
+    '''2. interpolate'''
+    print xArray.shape, yArray.shape, zArray.shape
+    tck = interpolate.bisplrep(xArray, yArray, zArray)
+    print 'tck'
+    # xNew = np.linspace(0, 500, 50001)
+    # yNew = np.linspace(0, 500, 50001)
+    xNew = np.linspace(0, 500, 19)
+    yNew = np.linspace(0, 500, 19)
+    print 'xyNew'
+    zNew = interpolate.bisplev(xNew, yNew, tck)
+    print zNew
+    plt.figure()
+    plt.pcolor(xNew, yNew, zNew)
+    plt.colorbar()
+    plt.title("Interpolated function.")
+    plt.show()
+
+
 if __name__ == "__main__":
     objFilePath = '../../github/vrn-07231340/obj/trump-12.obj'
     imgPath = '../../github/vrn-07231340/examples/scaled/trump-12.jpg'
     # testObj(objFilePath)
     # testImg(imgPath)
     '''3d project to 2d'''
-    projection(objFilePath, imgPath)
+    # projection(objFilePath, imgPath)
     '''nod'''
-    nodAngle = 30
     '''there are 2 options for nod center:'''
     '''a. 'maxY': Y axis maximum point'''
     '''b. 'midX': midpoint of X axis with maximum of Y axis'''
-    nodCenterMode = ['maxY', 'midX']
-    nodedObjLines = nod(objFilePath, nodAngle, nodCenterMode[1])
-    projection(nodedObjLines, imgPath)
+    # nodAngle = 30
+    # nodCenterMode = ['maxY', 'midX']
+    # nodedObjLines = nod(objFilePath, nodAngle, nodCenterMode[1])
+    # projection(nodedObjLines, imgPath)
     '''shake'''
-    shakeAngle = 30
-    shakeCenterMode = ['maxY', 'midX']
-    shakeDirection = ['left', 'right']
-    shakedObjLines = shake(objFilePath, shakeAngle,
-                           shakeDirection[0], shakeCenterMode[0])
-    projection(shakedObjLines, imgPath)
+    # shakeAngle = 30
+    # shakeCenterMode = ['maxY', 'midX']
+    # shakeDirection = ['left', 'right']
+    # shakedObjLines = shake(objFilePath, shakeAngle,
+    #                        shakeDirection[0], shakeCenterMode[0])
+    # projection(shakedObjLines, imgPath)
     '''turn'''
-    turnAngle = 30
-    turnCenterMode = ['maxY', 'midX']
-    turnDirection = ['left', 'right']
-    turnedObjLines = turn(objFilePath, turnAngle,
-                          turnDirection[0], turnCenterMode[0])
-    projection(turnedObjLines, imgPath)
+    # turnAngle = 30
+    # turnCenterMode = ['maxY', 'midX']
+    # turnDirection = ['left', 'right']
+    # turnedObjLines = turn(objFilePath, turnAngle,
+    #                       turnDirection[0], turnCenterMode[0])
+    # projection(turnedObjLines, imgPath)
+    '''resize obj'''
+    # resizeObjLines = resizeObj(objFilePath)
+    # objLines = readObj(objFilePath)
+    # projectionResize(objFilePath, imgPath)
+    '''FIXME'''
+    scipyInterpolate(objFilePath)
