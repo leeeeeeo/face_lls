@@ -1,8 +1,15 @@
 ** code/exp01 **
 headpose.py
-解析obj文件
-将3D模型投影为2D
-点头,转头，摇头
+1. 解析obj文件
+2. 将3D模型投影为2D
+3. 点头,转头，摇头
+4. 正在写 headpose.py 的插值：
+	a. 分别获得 x, y, z 的 np.array。
+	b. tck = interpolate.bisplrep(xArray, yArray, zArray)。
+	c. 设新的 x, y 轴密度。
+	d. zNew = interpolate.bisplev(xNew, yNew, tck)，生成新的 z。 
+	但是 x, y, z 的 np.array 太大了，无法计算。
+
 
 ** github/vrn-07231340 **
 可运行的VRN 2D-->3D 
