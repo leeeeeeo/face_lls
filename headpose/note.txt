@@ -1,5 +1,5 @@
 ** code/exp01 **
-test_obj.py
+headpose.py
 解析obj文件
 将3D模型投影为2D
 点头,转头，摇头
