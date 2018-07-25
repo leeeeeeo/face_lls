@@ -1,8 +1,10 @@
+# -*- coding: utf-8 -*-
 import os
 import cv2
 import numpy as np
 import math
 from scipy import interpolate
+from scipy.interpolate import griddata
 import matplotlib.pyplot as plt
 import matplotlib
 matplotlib.use('TkAgg')
@@ -357,41 +359,72 @@ def projectionResize(objFilePath_OR_objLines, imgPath):
     cv2.imshow('projectedImg', projectedImg)
     resizedImg = cv2.resize(projectedImg, (500, 500))
     cv2.imshow('resizedImg', resizedImg)
+    # resizedImg = cv2.resize(projectedImg, (500, 500),
+    #                         interpolation=cv2.INTER_AREA)
+    # cv2.imshow('resizedImgA', resizedImg)
+    # resizedImg = cv2.resize(projectedImg, (500, 500),
+    #                         interpolation=cv2.INTER_CUBIC)
+    # cv2.imshow('resizedImgC', resizedImg)
+    # resizedImg = cv2.resize(projectedImg, (500, 500),
+    #                         interpolation=cv2.INTER_LANCZOS4)
+    # cv2.imshow('resizedImgL', resizedImg)
+    cv2.waitKey(0)
+    return projectedImg
+
+
+def projectionResize1(objFilePath_OR_objLines):
+    if os.path.isfile(str(objFilePath_OR_objLines)):
+        '''read origin obj file'''
+        objLines, vLines, fLines = readObj(objFilePath)
+    else:
+        objLines = objFilePath_OR_objLines
+    '''read same image'''
+    '''create projected image'''
+    projectedImg = np.zeros((500, 500, 3))
+    for objLine in objLines:
+        if objLine.split()[0] == 'v':
+            v, x, y, z, r, g, b = objLine.split()
+            projectedImg[int(float(y)), int(float(x)), 0] = b
+            projectedImg[int(float(y)), int(float(x)), 1] = g
+            projectedImg[int(float(y)), int(float(x)), 2] = r
+    cv2.imshow('projectedImg', projectedImg)
     cv2.waitKey(0)
     return projectedImg
 
 
 def scipyInterpolate(objFilePath):
+    '''origin plt'''
+    grid_x, grid_y = np.mgrid[0:200:200j, 0:200:200j]
     objLines, vLines, fLines = readObj(objFilePath)
-    '''1. x,y,z -> numpy array'''
+    origin = np.zeros(grid_x.shape)
+    for objLine in objLines:
+        if objLine.split()[0] == 'v':
+            v, x, y, z, r, g, b = objLine.split()
+            origin[int(float(y)), int(float(x))] = z
+    plt.subplot(121)
+    plt.imshow(origin)
+    plt.title('original size')
+    # plt.show()
+    '''points & values'''
+    grid_x, grid_y = np.mgrid[0:200:200j, 0:200:200j]
+    objLines, vLines, fLines = readObj(objFilePath)
     xArray = np.array([])
     yArray = np.array([])
     zArray = np.array([])
-    count = 0
     for objLine in objLines:
         if objLine.split()[0] == 'v':
-            count = count+1
-            if count == 20:
-                break
             v, x, y, z, r, g, b = objLine.split()
             xArray = np.append(xArray, float(x))
             yArray = np.append(yArray, float(y))
             zArray = np.append(zArray, float(z))
-    '''2. interpolate'''
-    print xArray.shape, yArray.shape, zArray.shape
-    tck = interpolate.bisplrep(xArray, yArray, zArray)
-    print 'tck'
-    # xNew = np.linspace(0, 500, 50001)
-    # yNew = np.linspace(0, 500, 50001)
-    xNew = np.linspace(0, 500, 19)
-    yNew = np.linspace(0, 500, 19)
-    print 'xyNew'
-    zNew = interpolate.bisplev(xNew, yNew, tck)
-    print zNew
-    plt.figure()
-    plt.pcolor(xNew, yNew, zNew)
-    plt.colorbar()
-    plt.title("Interpolated function.")
+    points = np.zeros((xArray.shape[0], 2))
+    for i in range(xArray.shape[0]):
+        points[i, :] = [yArray[i], xArray[i]]
+    values = zArray
+    grid = griddata(points, values, (grid_x, grid_y), method='cubic')
+    plt.subplot(122)
+    plt.imshow(grid)
+    plt.title('after interpolate')
     plt.show()
 
 
@@ -424,9 +457,15 @@ if __name__ == "__main__":
     # turnedObjLines = turn(objFilePath, turnAngle,
     #                       turnDirection[0], turnCenterMode[0])
     # projection(turnedObjLines, imgPath)
+
     '''resize obj'''
+    '''a. 直接把obj里面的所有点的坐标x, y, z放大3倍（x3），重新生成的3d模型看起来正常'''
+    '''   但是由于点的间距变大，投影到2d会出现黑色点'''
     # resizeObjLines = resizeObj(objFilePath)
+    # projectionResize1(resizeObjLines)
+    '''b. 先把3d投影回2d，然后直接对2d做resize'''
     # objLines = readObj(objFilePath)
     # projectionResize(objFilePath, imgPath)
-    '''FIXME'''
+    '''c. 用scipy.interpolate.griddata进行插值'''
+    '''   左图是原始x, y, z. 右图是插值后的x, y, z.'''
     scipyInterpolate(objFilePath)

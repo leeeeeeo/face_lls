@@ -3,12 +3,10 @@ headpose.py
 1. 解析obj文件
 2. 将3D模型投影为2D
 3. 点头,转头，摇头
-4. 正在写 headpose.py 的插值：
-	a. 分别获得 x, y, z 的 np.array。
-	b. tck = interpolate.bisplrep(xArray, yArray, zArray)。
-	c. 设新的 x, y 轴密度。
-	d. zNew = interpolate.bisplev(xNew, yNew, tck)，生成新的 z。 
-	但是 x, y, z 的 np.array 太大了，无法计算。
+4. 三种插值：
+	a. 直接把obj里面的所有点的坐标x, y, z放大3倍（x3），重新生成的3d模型看起来正常，但是由于点的间距变大，投影到2d会出现黑色点
+	b. 先把3d投影回2d，然后直接对2d做resize
+	c. 用scipy.interpolate.griddata进行插值
 
 
 ** github/vrn-07231340 **
