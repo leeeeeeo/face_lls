@@ -461,11 +461,11 @@ if __name__ == "__main__":
     '''resize obj'''
     '''a. 直接把obj里面的所有点的坐标x, y, z放大3倍（x3），重新生成的3d模型看起来正常'''
     '''   但是由于点的间距变大，投影到2d会出现黑色点'''
-    # resizeObjLines = resizeObj(objFilePath)
-    # projectionResize1(resizeObjLines)
+    resizeObjLines = resizeObj(objFilePath)
+    projectionResize1(resizeObjLines)
     '''b. 先把3d投影回2d，然后直接对2d做resize'''
-    # objLines = readObj(objFilePath)
-    # projectionResize(objFilePath, imgPath)
+    objLines = readObj(objFilePath)
+    projectionResize(objFilePath, imgPath)
     '''c. 用scipy.interpolate.griddata进行插值'''
     '''   左图是原始x, y, z. 右图是插值后的x, y, z.'''
     scipyInterpolate(objFilePath)
