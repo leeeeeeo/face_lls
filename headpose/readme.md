@@ -9,19 +9,18 @@
   - 先把3d投影回2d，然后直接对2d做resize
   - 用scipy.interpolate.griddata进行插值
 
-## `code/exp01/put_face_back.py`
+## code/exp01/put_face_back.py
 1. 对2D原始图片做关键点检测
 2. 读3D model
-3. 拟合椭球体：
-  - 109-120 行是使用OPENCV拟合三个面的椭圆
-  - 122-150 行是使用SKIMAGE拟合椭球体
+3. `拟合椭球体：`
+  - `109-120 行是使用OPENCV拟合三个面的椭圆`
+  - `122-150 行是使用SKIMAGE拟合椭球体`
 
-## `github/ellipsoid_fit_python/plot_ellipsoid.py`
-开源代码拟合3D model的椭球体  
-输入是3D model的所有点坐标  
+## github/ellipsoid_fit_python/plot_ellipsoid.py
+`开源代码拟合3D model的椭球体, 输入是3D model的所有点坐标`
 
-## `code/exp01/meshwarp.py`
-对skimage的mesh warp的example进行修改
+## code/exp01/meshwarp.py
+`46 行起，对skimage的mesh warp的example进行修改`
 
 ## github/vrn-07231340
 可运行的VRN 2D-->3D  
