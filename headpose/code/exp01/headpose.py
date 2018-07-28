@@ -126,10 +126,10 @@ def nod3DModel(objLines, nodCenter, nodAngle):
     return nodedObjLines
 
 
-def saveObjFile(objFileName, objLines):
-    newObjFilePath = '{}-{}.obj'.format(
-        os.path.splitext(objFilePath)[0], objFileName)
-    newObjFile = open(newObjFilePath, 'w')
+def saveObjFile(objFileName, objLines, objPath):
+    newobjPath = '{}-{}.obj'.format(
+        os.path.splitext(objPath)[0], objFileName)
+    newObjFile = open(newobjPath, 'w')
     for objLine in objLines:
         newObjFile.write('{}\n'.format(objLine))
     newObjFile.close()
@@ -148,18 +148,18 @@ def objFloat2Int(objLines):
     return newObjLines
 
 
-def readObj(objFilePath):
+def readObj(objPath):
     '''read obj file'''
-    objFile = open(objFilePath, 'r')
+    objFile = open(objPath, 'r')
     objLines = [line.strip() for line in objFile]
     vLines = [objLine for objLine in objLines if objLine.split()[0] == 'v']
     fLines = [objLine for objLine in objLines if objLine.split()[0] == 'f']
     return objLines, vLines, fLines
 
 
-def testObj(objFilePath):
+def testObj(objPath):
     '''read origin obj file'''
-    objLines, vLines, fLines = readObj(objFilePath)
+    objLines, vLines, fLines = readObj(objPath)
     '''modify obj lines'''
     newObjLines = []
     for objLine in objLines:
@@ -187,7 +187,7 @@ def testObj(objFilePath):
                 objLine = '{} {} {} {} {} {} {}'.format(v, x, y, z, r, g, b)
         newObjLines.append(objLine)
     '''save new obj file'''
-    saveObjFile('new', newObjLines)
+    saveObjFile('new', newObjLines, objPath)
 
 
 def testImg(imgPath):
@@ -209,12 +209,12 @@ def testImg(imgPath):
     cv2.waitKey(0)
 
 
-def projection(objFilePath_OR_objLines, imgPath):
-    if os.path.isfile(str(objFilePath_OR_objLines)):
+def projection(objPath_OR_objLines, imgPath):
+    if os.path.isfile(str(objPath_OR_objLines)):
         '''read origin obj file'''
-        objLines, vLines, fLines = readObj(objFilePath)
+        objLines, vLines, fLines = readObj(objPath)
     else:
-        objLines = objFilePath_OR_objLines
+        objLines = objPath_OR_objLines
     '''read same image'''
     img = cv2.imread(imgPath)
     '''create projected image'''
@@ -282,33 +282,33 @@ def rotateYZPlane(ptY, ptZ, center, angle):
     return round(newY, 1), round(newZ, 1)
 
 
-def nod(objFilePath, nodAngle, nodCenterMode):
+def nod(objPath, nodAngle, nodCenterMode):
     '''read origin obj file'''
-    objLines, vLines, fLines = readObj(objFilePath)
+    objLines, vLines, fLines = readObj(objPath)
     '''1. find nod center'''
     nodCenter = findNodCenter(objLines, nodCenterMode)
     '''2. nod every point in YZ plane around nodCenter'''
     nodedObjLines = nod3DModel(objLines, nodCenter, nodAngle)
     '''3. save noded obj file'''
-    saveObjFile('noded', nodedObjLines)
+    saveObjFile('noded', nodedObjLines, objPath)
     return nodedObjLines
 
 
-def shake(objFilePath, shakeAngle, shakeDirection, shakeCenterMode):
+def shake(objPath, shakeAngle, shakeDirection, shakeCenterMode):
     '''read origin obj file'''
-    objLines, vLines, fLines = readObj(objFilePath)
+    objLines, vLines, fLines = readObj(objPath)
     '''1. find shake center'''
     shakeCenter = findShakeCenter(objLines, shakeCenterMode)
     '''2. shake every point in XY plane around shakeCenter'''
     shakedObjLines = shake3DModel(objLines, shakeCenter, shakeAngle)
     '''3. save shaked obj file'''
-    saveObjFile('shaked', shakedObjLines)
+    saveObjFile('shaked', shakedObjLines, objPath)
     return shakedObjLines
 
 
-def turn(objFilePath, turnAngle, turnDirection, turnCenterMode):
+def turn(objPath, turnAngle, turnDirection, turnCenterMode):
     '''read origin obj file'''
-    objLines, vLines, fLines = readObj(objFilePath)
+    objLines, vLines, fLines = readObj(objPath)
     '''1. find turn center'''
     turnCenter = findTurnCenter(objLines, turnCenterMode)
     '''2. turn every point in XZ plane around turnCenter'''
@@ -317,13 +317,13 @@ def turn(objFilePath, turnAngle, turnDirection, turnCenterMode):
     elif turnDirection == 'right':
         turnedObjLines = turn3DModel(objLines, turnCenter, 0-turnAngle)
     '''3. save turned obj file'''
-    saveObjFile('turned', turnedObjLines)
+    saveObjFile('turned', turnedObjLines, objPath)
     return turnedObjLines
 
 
-def resizeObj(objFilePath):
+def resizeObj(objPath):
     '''read origin obj file'''
-    objLines, vLines, fLines = readObj(objFilePath)
+    objLines, vLines, fLines = readObj(objPath)
     '''modify obj lines'''
     newObjLines = []
     for objLine in objLines:
@@ -336,16 +336,16 @@ def resizeObj(objFilePath):
                 v, x, y, z, r, g, b)
         newObjLines.append(objLine)
     '''save new obj file'''
-    saveObjFile('resize', newObjLines)
+    saveObjFile('resize', newObjLines, objPath)
     return newObjLines
 
 
-def projectionResize(objFilePath_OR_objLines, imgPath):
-    if os.path.isfile(str(objFilePath_OR_objLines)):
+def projectionResize(objPath_OR_objLines, imgPath):
+    if os.path.isfile(str(objPath_OR_objLines)):
         '''read origin obj file'''
-        objLines, vLines, fLines = readObj(objFilePath)
+        objLines, vLines, fLines = readObj(objPath)
     else:
-        objLines = objFilePath_OR_objLines
+        objLines = objPath_OR_objLines
     '''read same image'''
     img = cv2.imread(imgPath)
     '''create projected image'''
@@ -372,12 +372,12 @@ def projectionResize(objFilePath_OR_objLines, imgPath):
     return projectedImg
 
 
-def projectionResize1(objFilePath_OR_objLines):
-    if os.path.isfile(str(objFilePath_OR_objLines)):
+def projectionResize1(objPath_OR_objLines):
+    if os.path.isfile(str(objPath_OR_objLines)):
         '''read origin obj file'''
-        objLines, vLines, fLines = readObj(objFilePath)
+        objLines, vLines, fLines = readObj(objPath)
     else:
-        objLines = objFilePath_OR_objLines
+        objLines = objPath_OR_objLines
     '''read same image'''
     '''create projected image'''
     projectedImg = np.zeros((500, 500, 3))
@@ -392,10 +392,10 @@ def projectionResize1(objFilePath_OR_objLines):
     return projectedImg
 
 
-def scipyInterpolate(objFilePath):
+def griddataInterpolate(objPath):
     '''origin plt'''
     grid_x, grid_y = np.mgrid[0:200:200j, 0:200:200j]
-    objLines, vLines, fLines = readObj(objFilePath)
+    objLines, vLines, fLines = readObj(objPath)
     origin = np.zeros(grid_x.shape)
     for objLine in objLines:
         if objLine.split()[0] == 'v':
@@ -407,7 +407,7 @@ def scipyInterpolate(objFilePath):
     # plt.show()
     '''points & values'''
     grid_x, grid_y = np.mgrid[0:200:200j, 0:200:200j]
-    objLines, vLines, fLines = readObj(objFilePath)
+    objLines, vLines, fLines = readObj(objPath)
     xArray = np.array([])
     yArray = np.array([])
     zArray = np.array([])
@@ -429,43 +429,43 @@ def scipyInterpolate(objFilePath):
 
 
 if __name__ == "__main__":
-    objFilePath = '../../github/vrn-07231340/obj/trump-12.obj'
+    objPath = '../../github/vrn-07231340/obj/trump-12.obj'
     imgPath = '../../github/vrn-07231340/examples/scaled/trump-12.jpg'
-    # testObj(objFilePath)
+    # testObj(objPath)
     # testImg(imgPath)
     '''3d project to 2d'''
-    # projection(objFilePath, imgPath)
+    # projection(objPath, imgPath)
     '''nod'''
     '''there are 2 options for nod center:'''
     '''a. 'maxY': Y axis maximum point'''
     '''b. 'midX': midpoint of X axis with maximum of Y axis'''
     # nodAngle = 30
     # nodCenterMode = ['maxY', 'midX']
-    # nodedObjLines = nod(objFilePath, nodAngle, nodCenterMode[1])
+    # nodedObjLines = nod(objPath, nodAngle, nodCenterMode[1])
     # projection(nodedObjLines, imgPath)
     '''shake'''
     # shakeAngle = 30
     # shakeCenterMode = ['maxY', 'midX']
     # shakeDirection = ['left', 'right']
-    # shakedObjLines = shake(objFilePath, shakeAngle,
+    # shakedObjLines = shake(objPath, shakeAngle,
     #                        shakeDirection[0], shakeCenterMode[0])
     # projection(shakedObjLines, imgPath)
     '''turn'''
     # turnAngle = 30
     # turnCenterMode = ['maxY', 'midX']
     # turnDirection = ['left', 'right']
-    # turnedObjLines = turn(objFilePath, turnAngle,
+    # turnedObjLines = turn(objPath, turnAngle,
     #                       turnDirection[0], turnCenterMode[0])
     # projection(turnedObjLines, imgPath)
 
     '''resize obj'''
-    '''a. 直接把obj里面的所有点的坐标x, y, z放大3倍（x3），重新生成的3d模型看起来正常'''
-    '''   但是由于点的间距变大，投影到2d会出现黑色点'''
-    resizeObjLines = resizeObj(objFilePath)
-    projectionResize1(resizeObjLines)
-    '''b. 先把3d投影回2d，然后直接对2d做resize'''
-    objLines = readObj(objFilePath)
-    projectionResize(objFilePath, imgPath)
-    '''c. 用scipy.interpolate.griddata进行插值'''
-    '''   左图是原始x, y, z. 右图是插值后的x, y, z.'''
-    scipyInterpolate(objFilePath)
+    # '''a. 直接把obj里面的所有点的坐标x, y, z放大3倍（x3），重新生成的3d模型看起来正常'''
+    # '''   但是由于点的间距变大，投影到2d会出现黑色点'''
+    # resizeObjLines = resizeObj(objPath)
+    # projectionResize1(resizeObjLines)
+    # '''b. 先把3d投影回2d，然后直接对2d做resize'''
+    # objLines = readObj(objPath)
+    # projectionResize(objPath, imgPath)
+    # '''c. 用scipy.interpolate.griddata进行插值'''
+    # '''   左图是原始x, y, z. 右图是插值后的x, y, z.'''
+    # griddataInterpolate(objPath)
