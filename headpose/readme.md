@@ -5,6 +5,10 @@
 ## meshwarp.py
 正在写椭圆面内的2D mesh warp
 
+
+---
+---
+
 # code/exp01/
 ## headpose.py
 1. 解析obj文件
@@ -26,7 +30,8 @@
 尝试对<a href="http://scikit-image.org/docs/dev/auto_examples/transform/plot_piecewise_affine.html?highlight=piecewise#piecewise-affine-transformation" target="_blank">skimage mesh warp example</a>进行修改，但是失败了。原因是deepcopy！
 
 
-
+---
+---
 
 
 # github/
