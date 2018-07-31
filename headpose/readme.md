@@ -8,6 +8,9 @@
 
 ---
 ---
+---
+---
+---
 
 # code/exp01/
 ## headpose.py
@@ -32,6 +35,9 @@
 
 ---
 ---
+---
+---
+---
 
 
 # github/
@@ -46,3 +52,4 @@
   - 将examples/里的图片生成raw文件, 存在output/里
 2. py raw2obj.py --image examples/scaled/trump-12.jpg --volume output/trump-12.raw --obj obj/trump-12.obj
   - 将raw文件转为obj文件
+
