@@ -2,6 +2,7 @@ import cv2
 import numpy as np
 import linecache
 from face_affine_utils import *
+import copy
 
 
 def changeExpression(imgOriginalPath, ptsOriginal, ptsTarget, triTxtPath, imgOriginal):
@@ -61,7 +62,6 @@ def recoverMask_old(ptsContour, imgOriginal, imgMorph):
 
 
 def morph(ptsOriginal, ptsTarget, imgOriginal, triTxtPath):
-
     imgMorph = np.zeros(imgOriginal.shape, dtype=imgOriginal.dtype)
     with open(triTxtPath) as file:
         for line in file:
@@ -72,7 +72,43 @@ def morph(ptsOriginal, ptsTarget, imgOriginal, triTxtPath):
             t1 = [ptsOriginal[x], ptsOriginal[y], ptsOriginal[z]]
             t = [ptsTarget[x], ptsTarget[y], ptsTarget[z]]
             morphTriangle(imgOriginal, imgMorph, t1, t)
+    return imgMorph
 
+
+def morph_modify_for_meshwarp(ptsOriginal, ptsTarget, imgOriginal, triList):
+    # imgMorph = np.zeros(imgOriginal.shape, dtype=imgOriginal.dtype)
+    # imgMorph = np.empty_like(imgOriginal)
+    imgMorph = copy.deepcopy(imgOriginal)
+    if str(type(triList)) == "<type 'str'>":
+        with open(triList) as file:
+            for line in file:
+                x, y, z = line.split()
+                x = int(x)
+                y = int(y)
+                z = int(z)
+                t1 = [ptsOriginal[x], ptsOriginal[y], ptsOriginal[z]]
+                t = [ptsTarget[x], ptsTarget[y], ptsTarget[z]]
+                t1 = np.asarray(t1)
+                t = np.asarray(t)
+                if (t1 == t).all():
+                    pass
+                else:
+                    morphTriangle_modify_for_meshwarp(
+                        imgOriginal, imgMorph, t1, t)
+    elif str(type(triList)) == "<type 'list'>":
+        for tri in triList:
+            x, y, z = tri.split()
+            x = int(x)
+            y = int(y)
+            z = int(z)
+            t1 = [ptsOriginal[x], ptsOriginal[y], ptsOriginal[z]]
+            t = [ptsTarget[x], ptsTarget[y], ptsTarget[z]]
+            t1 = np.asarray(t1)
+            t = np.asarray(t)
+            if (t1 == t).all():
+                pass
+            else:
+                morphTriangle_modify_for_meshwarp(imgOriginal, imgMorph, t1, t)
     return imgMorph
 
 

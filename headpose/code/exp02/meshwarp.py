@@ -51,16 +51,17 @@ def twoPointsDistance(point1, point2):
 
 def mainMeshWarp():
     '''1. read image and load new landmarks (nod)'''
+    tmp = cv2.imread('./tmp.png')
     image = cv2.imread('../../github/vrn-07231340/examples/trump-12.jpg')
     rows, cols = image.shape[0], image.shape[1]
 
     originLandmark2D = getLandmark2D(image)
-    targetLandmark2DPath = '../../data/talkingphoto/IMG_2294/IMG_2294_74.png.txt'
+    targetLandmark2DPath = '../../data/talkingphoto/IMG_2294/IMG_2294_26.png.txt'
     targetLandmark2D = readPoints(targetLandmark2DPath)[:68]
 
     '''2. 新建source mesh'''
-    gridSize = 500
-    src_rows = np.linspace(0, rows, gridSize)  # 10 行
+    gridSize = 50
+    src_rows = np.linspace(0, rows, 10)  # 10 行
     src_cols = np.linspace(0, cols, gridSize)  # 20 列
     src_rows, src_cols = np.meshgrid(src_rows, src_cols)
     src = np.dstack([src_cols.flat, src_rows.flat])[0]
@@ -85,9 +86,9 @@ def mainMeshWarp():
     pointsInEllipseArray = np.asarray(pointsInEllipseList)
     '''swap collums of pointsInEllipseList'''
     # x=pointsInEllipseList[i][0], y=pointsInEllipseList[i][1]
-    pointsInEllipseArray[:, [0, 1]] = pointsInEllipseArray[:, [1, 0]]
-    # image[rr, cc] = 255  # draw ellipse perimeter on image
-    # drawPointsOnImg(pointsInEllipseArray,image,'r')
+    # pointsInEllipseArray[:, [0, 1]] = pointsInEllipseArray[:, [1, 0]]
+    image[rr, cc] = 255  # draw ellipse perimeter on image
+    # drawPointsOnImg(pointsInEllipseArray, image, 'r')
 
     '''4. compute delta (68) of each new landmark X(Y) and old landmark X(Y)'''
     deltaAllLandmarksList = []
@@ -111,6 +112,8 @@ def mainMeshWarp():
         #     for (deltaX, deltaY), (landmarkX, landmarkY) in zip(deltaInSmallGridArray, landmarksInSmallGridArray):
         #         cv2.line(imageTmp, (int(landmarkX), int(landmarkY)), (int(
         #             landmarkX+deltaX), int(landmarkY+deltaY)), (255, 0, 0), 2)
+        #         cv2.circle(imageTmp, (int(landmarkX+deltaX),
+        #                               int(landmarkY+deltaY)), 2, (0, 0, 255), -1)
         # cv2.imshow('imgTmp', imageTmp)
         # cv2.waitKey(0)
         deltaXOfMeshPoint = 0
@@ -125,18 +128,32 @@ def mainMeshWarp():
                     twoPointsDistance(meshPoint, landmarkInSmallGrid)
         targetMeshPointX = meshPoint[0]+deltaXOfMeshPoint
         targetMeshPointY = meshPoint[1]+deltaYOfMeshPoint
+        '''画每一个meshPoint的起点和终点'''
+        # imageTmp = copy.deepcopy(tmp)
+        # cv2.line(imageTmp, (int(meshPoint[0]), int(meshPoint[1])),
+        #          (int(targetMeshPointX), int(targetMeshPointY)), (0, 255, 0), 2)
+        # cv2.circle(imageTmp, (int(meshPoint[0]), int(meshPoint[1])),
+        #            3, (0, 255, 0), -1)
+        # cv2.circle(imageTmp, (int(targetMeshPointX), int(targetMeshPointY)),
+        #            2, (0, 0, 255), -1)
+        # cv2.imshow('imageTmp', imageTmp)
+        # cv2.waitKey(0)
         targetPointsInEllipseList.append([targetMeshPointX, targetMeshPointY])
     targetPointsInEllipseArray = np.asarray(targetPointsInEllipseList)
     # drawPointsOnImg(pointsInEllipseArray, image, 'b')
     # drawPointsOnImg(targetPointsInEllipseArray, image, 'r')
 
     '''6. compute final target mesh'''
-    targetPointsInEllipseArray[:, [0, 1]
-                               ] = targetPointsInEllipseArray[:, [1, 0]]
-    dst[indexInEllipseList] = targetPointsInEllipseArray
-
-    # src = np.concatenate((src, np.asarray(originLandmark2D)), axis=0)
-    # dst = np.concatenate((dst, np.asarray(targetLandmark2D)), axis=0)
+    print targetPointsInEllipseArray.shape
+    drawPointsOnImg(targetPointsInEllipseArray, image, 'g')
+    # targetPointsInEllipseArray[:, [0, 1]
+    #                            ] = targetPointsInEllipseArray[:, [1, 0]]
+    # dst[indexInEllipseList] = targetPointsInEllipseArray
+    # dst[:, [0, 1]] = dst[:, [1, 0]]
+    '''draw src and dst mesh on image'''
+    drawPointsOnImg(src, image, 'b')
+    drawPointsOnImg(dst, image, 'r')
+    cv2.imwrite('./tmp.png', image)
 
     '''7. PiecewiseAffineTransform'''
     tform = PiecewiseAffineTransform()

@@ -224,6 +224,39 @@ def morphTriangle(img1, img, t1,  t):
     # cv2.waitKey(0)
 
 
+def morphTriangle_modify_for_meshwarp(img1, img, t1,  t):
+    '''
+    img1: imgOriginal
+    img: imgMorph
+    '''
+    r1 = cv2.boundingRect(np.float32([t1]))
+    r = cv2.boundingRect(np.float32([t]))
+
+    t1Rect = []
+    tRect = []
+
+    for i in xrange(0, 3):
+        tRect.append(((t[i][0] - r[0]), (t[i][1] - r[1])))
+        t1Rect.append(((t1[i][0] - r1[0]), (t1[i][1] - r1[1])))
+
+    maskTriangle = np.zeros((r[3], r[2], 3), dtype=np.float32)
+    cv2.fillConvexPoly(maskTriangle, np.int32(tRect), (1.0, 1.0, 1.0), 16, 0)
+    # cv2.imshow('maskTriangle', maskTriangle)
+    img1Rect = img1[r1[1]:r1[1] + r1[3], r1[0]:r1[0] + r1[2]]
+    # print (r1[1], r1[1] + r1[3], r1[0], r1[0] + r1[2])
+    # cv2.imshow('img1Rect', img1Rect)
+    # cv2.waitKey(0)
+
+    size = (r[2], r[3])
+    warpImage1 = applyAffineTransform(img1Rect, t1Rect, tRect, size)
+
+    imgRect = warpImage1
+    img[r[1]:r[1] + r[3], r[0]:r[0] + r[2]] = img[r[1]:r[1] +
+                                                  r[3], r[0]:r[0] + r[2]] * (1 - maskTriangle) + imgRect * maskTriangle
+    # cv2.imshow('img', img)
+    # cv2.waitKey(0)
+
+
 def applyAffineTransform(src, srcTri, dstTri, size):
 
     warpMat = cv2.getAffineTransform(np.float32(srcTri), np.float32(dstTri))
