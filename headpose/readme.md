@@ -18,8 +18,10 @@
 2. 3D model nod
 3. 3D nod face landmark --> 2D nod face landmark
 4. 从 twoD\_threeD\_twoD\_LR\_MeshHair.py 或者 twoD\_threeD\_twoD\_LR\_ManuallySelectHair.py 得到origin hair landmark 和 nod hair landmark
-5. 源图 + (2D face landmark + origin hair landmark) + (2D nod face landmark + nod hair landmark)   
-  =(warp)=> ^_^ 
+5. source image +   
+(2D face landmark + origin hair landmark) +   
+(2D nod face landmark + nod hair landmark) +    
+=(warp)=> nod image
 
 ---
 ---
