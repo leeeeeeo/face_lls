@@ -1,3 +1,16 @@
+# code/exp08
+## LR2HR.py
+低分辨率关键点 --> 高分辨率关键点
+## twoD\_threeD\_twoD\_LR\_Hair.py
+加入低分辨率关键点 --> 高分辨率关键点  
+高分辨率点头
+
+---
+---
+---
+---
+---
+
 # code/exp07
 ## twoD\_threeD\_twoD\_LR\_MeshHair.py
 1. 整个头部椭圆取 mesh

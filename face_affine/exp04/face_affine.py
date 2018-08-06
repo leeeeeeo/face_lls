@@ -18,7 +18,7 @@ def saveAnimation(frameList, fps, videoPath, img, reverse=False):
             videoWriter.write(frame)
 
 
-def changeExpression(imgOriginalPath, ptsOriginal, ptsTarget, triTxtPath, imgOriginal):
+def changeExpression(ptsOriginal, ptsTarget, triTxtPath, imgOriginal):
     step = 10
     ptsOld = []
     frameList = []

@@ -27,8 +27,8 @@ def generateTriList(pointsForDelaunay, img):
         ptsDict['({}, {})'.format(int(float(pts[0])), int(float(pts[1])))] = i
     # print ptsDict
     tartriList = delaunay(img.shape, pointsForDelaunay, removeOutlier=True)
-    cv2.imshow('img', img)
-    cv2.waitKey(0)
+    # cv2.imshow('img', img)
+    # cv2.waitKey(0)
     for tarTri in tartriList:
         triLine = '{} {} {}'.format(
             ptsDict[str(tarTri[0])], ptsDict[str(tarTri[1])], ptsDict[str(tarTri[2])])

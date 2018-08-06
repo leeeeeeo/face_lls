@@ -220,8 +220,11 @@ def morphTriangle(img1, img, t1,  t):
     warpImage1 = applyAffineTransform(img1Rect, t1Rect, tRect, size)
 
     imgRect = warpImage1
-    img[r[1]:r[1] + r[3], r[0]:r[0] + r[2]] = img[r[1]:r[1] +
-                                                  r[3], r[0]:r[0] + r[2]] * (1 - maskTriangle) + imgRect * maskTriangle
+    try:
+        img[r[1]:r[1] + r[3], r[0]:r[0] + r[2]] = img[r[1]:r[1] +
+                                                      r[3], r[0]:r[0] + r[2]] * (1 - maskTriangle) + imgRect * maskTriangle
+    except:
+        pass
     # cv2.imshow('img', img)
     # cv2.waitKey(0)
 
@@ -253,8 +256,11 @@ def morphTriangle_modify_for_meshwarp(img1, img, t1,  t):
     warpImage1 = applyAffineTransform(img1Rect, t1Rect, tRect, size)
 
     imgRect = warpImage1
-    img[r[1]:r[1] + r[3], r[0]:r[0] + r[2]] = img[r[1]:r[1] +
-                                                  r[3], r[0]:r[0] + r[2]] * (1 - maskTriangle) + imgRect * maskTriangle
+    try:
+        img[r[1]:r[1] + r[3], r[0]:r[0] + r[2]] = img[r[1]:r[1] +
+                                                      r[3], r[0]:r[0] + r[2]] * (1 - maskTriangle) + imgRect * maskTriangle
+    except:
+        pass
     # cv2.imshow('img', img)
     # cv2.waitKey(0)
 
