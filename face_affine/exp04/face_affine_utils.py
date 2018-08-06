@@ -112,6 +112,8 @@ def addEdgeLandmark(pts, img):
     halfWidth = size[1]/2
     edgeLandmark = [(0, 0), (0, halfHeight), (0, imgHeight), (halfWidth, imgHeight),
                     (imgWidth, imgHeight), (imgWidth, halfHeight), (imgWidth, 0), (halfWidth, 0)]
+    # edgeLandmark = [[0, 0], [0, halfHeight], [0, imgHeight], [halfWidth, imgHeight],
+    # [imgWidth, imgHeight], [imgWidth, halfHeight], [imgWidth, 0], [halfWidth, 0]]
     return pts+edgeLandmark
 
 
@@ -301,6 +303,36 @@ def delaunay(size, points, removeOutlier=False):
             pt2 = (triangle[2], triangle[3])
             pt3 = (triangle[4], triangle[5])
             triList.append((pt1, pt2, pt3))
+    return triList
+
+
+def delaunay_with_draw(img, size, points, removeOutlier=False):
+    triList = []
+    rect = (0, 0, size[1], size[0])
+    subdivOriginal = cv2.Subdiv2D(rect)
+    for p in points:
+        subdivOriginal.insert(p)
+    triangleList = subdivOriginal.getTriangleList()
+    triangleList = triangleList.astype(np.int32)
+    if removeOutlier == True:
+        for triangle in triangleList:
+            pt1 = (triangle[0], triangle[1])
+            pt2 = (triangle[2], triangle[3])
+            pt3 = (triangle[4], triangle[5])
+            if rect_contains(rect, pt1) and rect_contains(rect, pt2) and rect_contains(rect, pt3):
+                cv2.line(img, pt1, pt2, (0, 0, 255), 1, cv2.LINE_AA, 0)
+                cv2.line(img, pt2, pt3, (0, 0, 255), 1, cv2.LINE_AA, 0)
+                cv2.line(img, pt3, pt1, (0, 0, 255), 1, cv2.LINE_AA, 0)
+                triList.append((pt1, pt2, pt3))
+    else:
+        for triangle in triangleList:
+            pt1 = (triangle[0], triangle[1])
+            pt2 = (triangle[2], triangle[3])
+            pt3 = (triangle[4], triangle[5])
+            triList.append((pt1, pt2, pt3))
+
+    cv2.imshow('img', img)
+    cv2.waitKey(0)
     return triList
 
 

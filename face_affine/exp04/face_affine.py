@@ -5,11 +5,23 @@ from face_affine_utils import *
 import copy
 
 
+def saveAnimation(frameList, fps, videoPath, img, reverse=False):
+    videoWriter = cv2.VideoWriter(videoPath, cv2.VideoWriter_fourcc(
+        *'mp4v'), fps, (img.shape[1], img.shape[0]))
+    if reverse == True:
+        for frame in reversed(frameList):
+            frameList.append(frame)
+        for frame in frameList:
+            videoWriter.write(frame)
+    else:
+        for frame in frameList:
+            videoWriter.write(frame)
+
+
 def changeExpression(imgOriginalPath, ptsOriginal, ptsTarget, triTxtPath, imgOriginal):
-    step = 50
+    step = 10
     ptsOld = []
-    # videoWriter = cv2.VideoWriter('./source/{}TO{}.mp4'.format(imgOriginalPath.split('.')[1].split('_')[1], ptsTargetPath.split(
-    #     '.')[1].split('_')[1]), cv2.VideoWriter_fourcc(*'mp4v'), 10, (imgOriginal.shape[1], imgOriginal.shape[0]))
+    frameList = []
     for pt in ptsOriginal:
         ptsOld.append((float(pt[0]), float(pt[1])))
     for i in range(step+1):
@@ -24,11 +36,12 @@ def changeExpression(imgOriginalPath, ptsOriginal, ptsTarget, triTxtPath, imgOri
         imgMorphTmp = morphChange(ptsOriginal, ptsTmp, imgOriginal, triTxtPath)
         ptsOld = ptsTmp
         cv2.imshow("Morphed Face Tmp", np.uint8(imgMorphTmp))
-        # videoWriter.write(imgMorphTmp)
+        frameList.append(imgMorphTmp)
         if i == 50:
             cv2.waitKey(0)
         else:
             cv2.waitKey(10)
+    return frameList
 
 
 def recoverMask(ptsContour, imgOriginal, imgMorph):
@@ -79,6 +92,43 @@ def morph_modify_for_meshwarp(ptsOriginal, ptsTarget, imgOriginal, triList):
     # imgMorph = np.zeros(imgOriginal.shape, dtype=imgOriginal.dtype)
     # imgMorph = np.empty_like(imgOriginal)
     imgMorph = copy.deepcopy(imgOriginal)
+    if str(type(triList)) == "<type 'str'>":
+        with open(triList) as file:
+            for line in file:
+                x, y, z = line.split()
+                x = int(x)
+                y = int(y)
+                z = int(z)
+                t1 = [ptsOriginal[x], ptsOriginal[y], ptsOriginal[z]]
+                t = [ptsTarget[x], ptsTarget[y], ptsTarget[z]]
+                t1 = np.asarray(t1)
+                t = np.asarray(t)
+                if (t1 == t).all():
+                    pass
+                else:
+                    morphTriangle_modify_for_meshwarp(
+                        imgOriginal, imgMorph, t1, t)
+    elif str(type(triList)) == "<type 'list'>":
+        for tri in triList:
+            x, y, z = tri.split()
+            x = int(x)
+            y = int(y)
+            z = int(z)
+            t1 = [ptsOriginal[x], ptsOriginal[y], ptsOriginal[z]]
+            t = [ptsTarget[x], ptsTarget[y], ptsTarget[z]]
+            t1 = np.asarray(t1)
+            t = np.asarray(t)
+            if (t1 == t).all():
+                pass
+            else:
+                morphTriangle_modify_for_meshwarp(imgOriginal, imgMorph, t1, t)
+    return imgMorph
+
+
+def morph_modify_for_2D3D2D_low_resolution(ptsOriginal, ptsTarget, imgOriginal, triList):
+    imgMorph = np.zeros(imgOriginal.shape, dtype=imgOriginal.dtype)
+    # imgMorph = np.empty_like(imgOriginal)
+    # imgMorph = copy.deepcopy(imgOriginal)
     if str(type(triList)) == "<type 'str'>":
         with open(triList) as file:
             for line in file:

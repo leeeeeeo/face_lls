@@ -1,3 +1,57 @@
+# code/exp07
+## twoD\_threeD\_twoD\_LR\_MeshHair.py
+1. 整个头部椭圆取 mesh
+2. 找到face landmark的minY
+3. 取mesh中y<minY的网格，作为头发区域的关键点（有点像是个帽子）
+4. 头发2D关键点 --> 3D
+5. 头发3D关键点 nod
+6. 头发3D关键点 --> 2D nod 头发关键点
+
+## twoD\_threeD\_twoD\_LR\_ManuallySelectHair.py
+1. 头发区域手动选择12个关键点
+2. 头发2D关键点 --> 3D
+3. 头发3D关键点 nod
+4. 头发3D关键点 --> 2D nod 头发关键点
+
+## twoD\_threeD\_twoD\_LR\_Hair.py
+1. 2D face landmark --> 3D face landmark
+2. 3D model nod
+3. 3D nod face landmark --> 2D nod face landmark
+4. 从 twoD\_threeD\_twoD\_LR\_MeshHair.py 或者 twoD\_threeD\_twoD\_LR\_ManuallySelectHair.py 得到origin hair landmark 和 nod hair landmark
+5. 源图 + (2D face landmark + origin hair landmark) + (2D nod face landmark + nod hair landmark)   
+  =(warp)=> ^_^ 
+
+---
+---
+---
+---
+---
+
+# code/exp06
+## twoD\_threeD\_twoD\_LowResolutionManuallySelectHair.py
+在 exp05/2D-3D-2D_low-resolution.py 的基础上，**手动** 选取了头发上12个关键点。  
+源图 +（2D face源图关键点+2D hair源图关键点）+（2D face点头关键点+2D hair点头关键点）=(warp)=> 2D点头图像
+
+---
+---
+---
+---
+---
+
+# code/exp05
+## 2D-3D-2D_low-resolution.py
+1. 源图2D关键点检测
+2. 2D源图关键点 --> 3D源model关键点
+3. 3D点头
+4. 3D点头关键点 --> 2D点头关键点
+5. 源图+2D源图关键点+2D点头关键点 =(warp)=> 2D点头图像
+
+---
+---
+---
+---
+---
+
 # code/exp04
 ## mesh_tri.py
 对网格点+68关键点生成delaunay三角形。
