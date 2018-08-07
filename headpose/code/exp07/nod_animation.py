@@ -13,6 +13,6 @@ originLandmark2DTxt = readPoints(originLandmark2DTxtPath)
 nodLandmark2DTxtPath = './nodLandmark2D.txt'
 nodLandmark2DTxt = readPoints(nodLandmark2DTxtPath)
 triTxtPath = './nodTri.txt'
-frameList = changeExpression(imgPath, originLandmark2DTxt,
+frameList = changeExpression(originLandmark2DTxt,
                              nodLandmark2DTxt, triTxtPath, img)
 saveAnimation(frameList, 25, './nod.mp4', img, reverse=True)

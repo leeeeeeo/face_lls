@@ -5,6 +5,7 @@ import os
 import logging
 import linecache
 from natsort import natsorted
+import copy
 
 FACE_CONTOUR_LANDMARKS = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
                           12, 13, 14, 15, 16, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17]
@@ -180,7 +181,8 @@ def video_to_image(mp4_file, mp4_dir, trans_file, param):
 
 
 def morphChange(ptsOriginal, ptsTmp, imgOriginal, triTxtPath):
-    imgMorphTmp = np.zeros(imgOriginal.shape, dtype=imgOriginal.dtype)
+    # imgMorphTmp = np.zeros(imgOriginal.shape, dtype=imgOriginal.dtype)
+    imgMorphTmp = copy.copy(imgOriginal)
     with open(triTxtPath) as file:
         for line in file:
             x, y, z = line.split()

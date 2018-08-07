@@ -126,9 +126,9 @@ def morph_modify_for_meshwarp(ptsOriginal, ptsTarget, imgOriginal, triList):
 
 
 def morph_modify_for_2D3D2D_low_resolution(ptsOriginal, ptsTarget, imgOriginal, triList):
-    imgMorph = np.zeros(imgOriginal.shape, dtype=imgOriginal.dtype)
+    # imgMorph = np.zeros(imgOriginal.shape, dtype=imgOriginal.dtype)
     # imgMorph = np.empty_like(imgOriginal)
-    # imgMorph = copy.deepcopy(imgOriginal)
+    imgMorph = copy.deepcopy(imgOriginal)
     if str(type(triList)) == "<type 'str'>":
         with open(triList) as file:
             for line in file:

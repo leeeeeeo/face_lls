@@ -1,9 +1,23 @@
+# code/exp09
+## twoD\_threeD\_twoD\_LR\_MeshHair.py
+  - 增加衣领检测 --> 两个衣领中间的一个点
+  - 增加外面一圈椭圆，在上面取6+1（衣领中点），一共7个点作为edge point
+
+## twoD\_threeD\_twoD\_LR\_Hair.py
+  - 替换 8 edge points --> 外面一圈椭圆上的 edge points
+
+---
+---
+---
+---
+---
+
 # code/exp08
 ## LR2HR.py
 低分辨率关键点 --> 高分辨率关键点
 ## twoD\_threeD\_twoD\_LR\_Hair.py
-加入低分辨率关键点 --> 高分辨率关键点  
-高分辨率点头
+  - 加入低分辨率关键点 --> 高分辨率关键点  
+  - 高分辨率点头
 
 ---
 ---
