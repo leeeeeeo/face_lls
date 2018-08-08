@@ -2,7 +2,6 @@
 from headpose import nod, projection, readObj
 from put_face_back import getLandmark2D, getLandmark3D, objLines2vLines, getNodLandmark3D, findvLine, optionChooseZMax, drawPointsOnImg, imshow
 import cv2
-import copy
 import sys
 sys.path.insert(0, '../../../face_affine/exp04')
 from face_affine_utils import addEdgeLandmark
@@ -87,12 +86,8 @@ def main2D_3D_2D_LR_Hair():
     # originLandmark2D = addEdgeLandmark(originLandmark2D, img)
     # nodLandmark2D = addEdgeLandmark(nodLandmark2D, img)
     '''8.2 OPTION2: OUTER ELLIPSE'''
-    # a = copy.copy(originLandmark2D)
     originLandmark2D = originLandmark2D+edgePoints
     nodLandmark2D = nodLandmark2D+edgePoints
-    # drawPointsOnImg(originLandmark2D, img, 'b')
-    # drawPointsOnImg(a, img, 'r')
-    # drawPointsOnImg(nodLandmark2D, img, 'g')
     # drawPointsOnImg(ellipseVerts, img, 'g', cover=True)
     # drawPointsOnImg(outerEllipseVerts, img, 'r', cover=True)
     # drawPointsOnImg(originLandmark2D, img, 'g', cover=True)
@@ -136,13 +131,8 @@ def main2D_3D_2D_LR_Hair():
                        < imgHR.shape[0] and i[1] < imgHR.shape[1]]
 
     '''9. delaunay triangle for [origin landmarks (face + hair)] + (edge points)'''
-    triList = generateTriList(originLandmark2DHR, imgHR)
-    '''9.1 save tri txt'''
-    triTxtPath = './nodTri.txt'
-    triTxt = open(triTxtPath, 'w')
-    for i in triList:
-        triTxt.write('{}\n'.format(i))
-    triTxt.close()
+    triList = generateTriList(
+        originLandmark2DHR, imgHR, triTxtPath='./nodTri.txt')
 
     '''10. warp HR'''
     imgMorph = morph_modify_for_2D3D2D_low_resolution(

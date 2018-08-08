@@ -20,7 +20,7 @@ def saveTriangleTxt(triangleTxtPath, imgOriginal, ptsOriginalPath):
     myTriTxt.close()
 
 
-def generateTriList(pointsForDelaunay, img):
+def generateTriList(pointsForDelaunay, img, triTxtPath='./nodTri.txt'):
     ptsDict = {}
     triList = []
     for i, pts in enumerate(pointsForDelaunay):
@@ -33,6 +33,10 @@ def generateTriList(pointsForDelaunay, img):
         triLine = '{} {} {}'.format(
             ptsDict[str(tarTri[0])], ptsDict[str(tarTri[1])], ptsDict[str(tarTri[2])])
         triList.append(triLine)
+    triTxt = open(triTxtPath, 'w')
+    for i in triList:
+        triTxt.write('{}\n'.format(i))
+    triTxt.close()
     return triList
 
 

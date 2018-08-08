@@ -1,3 +1,17 @@
+# code/exp11
+## twoD\_threeD\_twoD\_HR\_NodHair.py
+1. 低分辨率：2D --> 3D --> 2D face landmark
+2. 2D face landmark LR --> HR
+3. 高分辨率：头发检测，衣领检测
+4. 高分辨率：头发部分低头
+5. warp
+
+---
+---
+---
+---
+---
+
 # code/exp10
 ## twoD\_threeD\_twoD\_LR\_Hair.py
 exp09 低分辨率 --> 高分辨率
