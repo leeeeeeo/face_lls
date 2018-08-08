@@ -95,47 +95,7 @@ def main2D_3D_2D_LR_Hair():
     # drawPointsOnImg(nodLandmark2D, img, 'r')
 
     '''9. delaunay triangle for [origin landmarks (face + hair)] + (eight edge points)'''
-    triList = generateTriList(originLandmark2D, img)
-    '''9.1 save tri txt'''
-    triTxtPath = './nodTri.txt'
-    triTxt = open(triTxtPath, 'w')
-    for i in triList:
-        triTxt.write('{}\n'.format(i))
-    triTxt.close()
-
-    '''10. warp LR'''
-    imgMorph = morph_modify_for_2D3D2D_low_resolution(
-        originLandmark2D, nodLandmark2D, img, triList)
-    imshow('imgMorph', imgMorph)
-    cv2.imwrite('./nod.jpg', imgMorph)
-    return originLandmark2D, nodLandmark2D, triList
-
-    '''LR to HR'''
-    # originLandmark2DHR = LR2HR(img, imgHR, originLandmark2D)
-    # for (x, y), (xmin, ymin) in zip(originLandmark2DHR, originLandmark2D):
-    #     if float(x) >= 640 or float(y) >= 640:
-    #         print (int(xmin), int(ymin))
-    #         cv2.circle(img, (int(xmin), int(ymin)), 3, (0, 255, 0), -1)
-    #         imshow('img', img)
-    # nodLandmark2DHR = LR2HR(img, imgHR, nodLandmark2D)
-
-    '''8. add 8 egde points'''
-    # nodLandmark2DHR = addEdgeLandmark(nodLandmark2DHR, imgHR)
-    # originLandmark2DHR = addEdgeLandmark(originLandmark2DHR, imgHR)
-    # # drawPointsOnImg(originLandmark2DHR, imgHR, 'g')
-    # # drawPointsOnImg(nodLandmark2DHR, imgHR, 'r')
-    # '''8.1 remove >= 640'''
-    # nodLandmark2DHRFinal = []
-    # originLandmark2DHRFinal = []
-    # for (x, y) in nodLandmark2DHR:
-    #     if float(x) < 640 and float(y) < 640:
-    #         nodLandmark2DHRFinal.append((x, y))
-    # for (x, y) in originLandmark2DHR:
-    #     if float(x) < 640 and float(y) < 640:
-    #         originLandmark2DHRFinal.append((x, y))
-
-    '''9. delaunay triangle for [origin landmarks (face + hair)] + (eight edge points)'''
-    # triList = generateTriList(originLandmark2DHRFinal, imgHR)
+    # triList = generateTriList(originLandmark2D, img)
     # '''9.1 save tri txt'''
     # triTxtPath = './nodTri.txt'
     # triTxt = open(triTxtPath, 'w')
@@ -143,12 +103,48 @@ def main2D_3D_2D_LR_Hair():
     #     triTxt.write('{}\n'.format(i))
     # triTxt.close()
 
-    '''10. warp HR'''
+    '''10. warp LR'''
     # imgMorph = morph_modify_for_2D3D2D_low_resolution(
-    #     originLandmark2DHRFinal, nodLandmark2DHRFinal, imgHR, triList)
-    # # imshow('imgMorph', imgMorph)
-    # # cv2.imwrite('./nod.jpg', imgMorph)
-    # return originLandmark2DHRFinal, nodLandmark2DHRFinal, triList
+    #     originLandmark2D, nodLandmark2D, img, triList)
+    # imshow('imgMorph', imgMorph)
+    # cv2.imwrite('./nod.jpg', imgMorph)
+    # return originLandmark2D, nodLandmark2D, triList
+
+    '''LR to HR'''
+    originLandmark2DHR = LR2HR(img, imgHR, originLandmark2D)
+    for (x, y), (xmin, ymin) in zip(originLandmark2DHR, originLandmark2D):
+        if float(x) >= 640 or float(y) >= 640:
+            print (int(xmin), int(ymin))
+            cv2.circle(img, (int(xmin), int(ymin)), 3, (0, 255, 0), -1)
+            imshow('img', img)
+    nodLandmark2DHR = LR2HR(img, imgHR, nodLandmark2D)
+
+    '''8. add 8 egde points'''
+    # nodLandmark2DHR = addEdgeLandmark(nodLandmark2DHR, imgHR)
+    # originLandmark2DHR = addEdgeLandmark(originLandmark2DHR, imgHR)
+    # drawPointsOnImg(originLandmark2DHR, imgHR, 'g')
+    # drawPointsOnImg(nodLandmark2DHR, imgHR, 'r')
+    '''8.1 remove >= 640'''
+    originLandmark2DHR = [(i[0], i[1]) for i in originLandmark2DHR if i[0]
+                          < imgHR.shape[0] and i[1] < imgHR.shape[1]]
+    nodLandmark2DHR = [(i[0], i[1]) for i in nodLandmark2DHR if i[0]
+                       < imgHR.shape[0] and i[1] < imgHR.shape[1]]
+
+    '''9. delaunay triangle for [origin landmarks (face + hair)] + (edge points)'''
+    triList = generateTriList(originLandmark2DHR, imgHR)
+    '''9.1 save tri txt'''
+    triTxtPath = './nodTri.txt'
+    triTxt = open(triTxtPath, 'w')
+    for i in triList:
+        triTxt.write('{}\n'.format(i))
+    triTxt.close()
+
+    '''10. warp HR'''
+    imgMorph = morph_modify_for_2D3D2D_low_resolution(
+        originLandmark2DHR, nodLandmark2DHR, imgHR, triList)
+    # imshow('imgMorph', imgMorph)
+    # cv2.imwrite('./nod.jpg', imgMorph)
+    return originLandmark2DHR, nodLandmark2DHR, triList
 
 
 if __name__ == "__main__":
