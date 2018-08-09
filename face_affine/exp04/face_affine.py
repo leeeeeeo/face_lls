@@ -16,6 +16,7 @@ def saveAnimation(frameList, fps, videoPath, img, time=0, reverse=False):
             for frame in frameList:
                 videoWriter.write(frame)
         else:
+            frameList = frameList*time
             for frame in frameList:
                 videoWriter.write(frame)
     else:
