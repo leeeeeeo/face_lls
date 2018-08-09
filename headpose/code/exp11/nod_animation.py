@@ -7,13 +7,14 @@ import cv2
 
 
 def mainNodAnimationHR():
+    time = 6
     originLandmark2DHR, nodLandmark2DHR, _ = main2D_3D_2D_HR_NodHair()
     imgHRPath = '../../github/vrn-07231340/examples/trump-12.jpg'
     imgHR = cv2.imread(imgHRPath)
     triTxtPath = './nodTri.txt'
     frameList = changeExpression(originLandmark2DHR,
                                  nodLandmark2DHR, triTxtPath, imgHR)
-    saveAnimation(frameList, 25, './nodHR.mp4', imgHR, reverse=True)
+    saveAnimation(frameList, 25, './nodHR.mp4', imgHR, time=time, reverse=True)
 
 
 def mainNodAnimation():

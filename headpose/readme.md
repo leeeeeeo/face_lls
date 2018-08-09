@@ -1,10 +1,32 @@
+# code/exp12
+## NodHR.py
+1. 低分辨率 —> 高分辨率：affine transform 参数
+2. 低分辨率 —> 高分辨率：3D Model LR -(affine)-> 3D Model HR
+3. 高分辨率：2D face landmark
+4. 高分辨率：头发检测 hair points + 衣领检测
+5. 高分辨率：(2D face landmark + hair points) —> (点头 2D face landmark + 点头 hair points)
+6. 高分辨率：(2D face landmark + hair points) —> inner ellipse
+7. 高分辨率：inner ellipse —> outer ellipse
+8. 高分辨率：固定outer ellipse，warp里面的(face landmark + hair points)
+
+
+---
+---
+---
+---
+---
+
 # code/exp11
 ## twoD\_threeD\_twoD\_HR\_NodHair.py
-1. 低分辨率：2D --> 3D --> 2D face landmark
-2. 2D face landmark LR --> HR
-3. 高分辨率：头发检测，衣领检测
-4. 高分辨率：头发部分低头
-5. warp
+1. 低分辨率：2D face landmark —> 3D face landmark
+2. 低分辨率：3D face landmark —> 点头 3D face landmark
+3. 低分辨率：点头 3D face landmark —> 点头 2D face landmark
+4. 低分辨率 —> 高分辨率：点头 2D face landmark —> 点头 2D face landmark
+5. 高分辨率：头发检测 hair points + 衣领检测
+6. 高分辨率：头发平面旋转 hair points —> 点头 hair points
+7. 高分辨率：(hair points + face landmark) —> inner ellipse
+8. 高分辨率：inner ellipse —> outer ellipse
+9. 高分辨率：固定outer ellipse，warp里面的(hair points + face landmark)
 
 ---
 ---

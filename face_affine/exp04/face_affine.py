@@ -5,21 +5,32 @@ from face_affine_utils import *
 import copy
 
 
-def saveAnimation(frameList, fps, videoPath, img, reverse=False):
+def saveAnimation(frameList, fps, videoPath, img, time=0, reverse=False):
     videoWriter = cv2.VideoWriter(videoPath, cv2.VideoWriter_fourcc(
         *'mp4v'), fps, (img.shape[1], img.shape[0]))
-    if reverse == True:
-        for frame in reversed(frameList):
-            frameList.append(frame)
-        for frame in frameList:
-            videoWriter.write(frame)
+    if time > 0:
+        if reverse == True:
+            for frame in reversed(frameList):
+                frameList.append(frame)
+            frameList = frameList*time
+            for frame in frameList:
+                videoWriter.write(frame)
+        else:
+            for frame in frameList:
+                videoWriter.write(frame)
     else:
-        for frame in frameList:
-            videoWriter.write(frame)
+        if reverse == True:
+            for frame in reversed(frameList):
+                frameList.append(frame)
+            for frame in frameList:
+                videoWriter.write(frame)
+        else:
+            for frame in frameList:
+                videoWriter.write(frame)
 
 
 def changeExpression(ptsOriginal, ptsTarget, triTxtPath, imgOriginal):
-    step = 10
+    step = 15
     ptsOld = []
     frameList = []
     for pt in ptsOriginal:
