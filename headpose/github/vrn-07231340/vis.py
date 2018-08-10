@@ -13,30 +13,28 @@ parser.add_argument('--texture', dest='texture',
 args = parser.parse_args()
 
 vol = np.fromfile(args.volume, dtype=np.int8)
-vol = vol.reshape((200,192,192))
+# vol = vol.reshape((200, 192, 192))
 
 im = vv.imread(args.image)
 
 t = vv.imshow(im)
-t.interpolate = True # interpolate pixels
+t.interpolate = True  # interpolate pixels
 
 # volshow will use volshow3 and rendering the isosurface if OpenGL
 # version is >= 2.0. Otherwise, it will show slices with bars that you
 # can move (much less useful).
-volRGB = np.stack(((vol > 1) * im[:,:,0],
-                   (vol > 1) * im[:,:,1],
-                   (vol > 1) * im[:,:,2]), axis=3)
+volRGB = np.stack(((vol > 1) * im[:, :, 0],
+                   (vol > 1) * im[:, :, 1],
+                   (vol > 1) * im[:, :, 2]), axis=3)
 
 v = vv.volshow(volRGB, renderStyle='iso')
-v.transformations[1].sz = 0.5 # Z was twice as deep during training
+v.transformations[1].sz = 0.5  # Z was twice as deep during training
 
 l0 = vv.gca()
-l0.light0.ambient = 0.9 # 0.2 is default for light 0
-l0.light0.diffuse = 1.0 # 1.0 is default
+l0.light0.ambient = 0.9  # 0.2 is default for light 0
+l0.light0.diffuse = 1.0  # 1.0 is default
 
 a = vv.gca()
-a.camera.fov = 0 # orthographic
+a.camera.fov = 0  # orthographic
 
 vv.use().Run()
-
-

@@ -1,3 +1,40 @@
+# code/exp15
+## ellipsoidHead.py
+输入椭球体三个半长轴（outerSemiX, outerSemiY, maxZ-minZ）,以及椭球体的中心（innerEllipseCenterX, innerEllipseCenterY, minZ）  
+输出椭球体objLines，可以保存obj
+
+## TurnHR.py
+加入head ellipsoid，还没有把hair points投影到head ellipse上
+
+## TurnHRHairPointsOnEllipsoid.py
+正在写把hair points投影到head ellipsoid
+
+---
+---
+---
+---
+---
+
+# code/exp14
+## TurnHR.py
+之前的点头和转头  都是把hair points固定在相同z的平面上做旋转。现在改成不是相同z的平面，而是曲面上旋转hair points。
+
+---
+---
+---
+---
+---
+
+# code/exp13
+## TurnHR.py
+按照exp12的方法做转头，看起来只有脸部有转动，脸部以外的转动很奇怪
+
+---
+---
+---
+---
+---
+
 # code/exp12
 ## NodHR.py
 1. 低分辨率 —> 高分辨率：affine transform 参数
