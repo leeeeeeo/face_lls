@@ -7,7 +7,13 @@
 加入head ellipsoid，还没有把hair points投影到head ellipse上
 
 ## TurnHRHairPointsOnEllipsoid.py
-正在写把hair points投影到head ellipsoid
+1. 低分辨率 —> 高分辨率：3D Model
+2. 高分辨率：头发检测 hair points + 衣领检测
+3. 高分辨率：拟合脸部椭圆 + 外沿椭圆
+4. 高分辨率：按照外沿椭圆的尺寸求一个椭球体
+5. 高分辨率：face landmark：2D —> 3D face model —> TURN —> 2D
+6. 高分辨率：hair points：2D —> 3D 椭球体 —> TURN —> 2D
+7. 高分辨率：(face landmark + hair points) WARP
 
 ---
 ---

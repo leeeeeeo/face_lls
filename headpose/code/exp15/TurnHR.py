@@ -164,7 +164,7 @@ def mainTurnHR():
     maxminDict = maxminXYZ(vLinesHR)
     maxZ = maxminDict['maxZCoord'][2]
     minZ = maxminDict['minZCoord'][2]
-    ellipsoidHeadVLines, ellipsoidHeadXY, ellipsoidHeadXZ, ellipsoidHeadYZ = ellipsoidHead(
+    ellipsoidHeadVLines, ellipsoidHeadXY, ellipsoidHeadXZ, ellipsoidHeadYZ, ellipsoidHeadXYZ = ellipsoidHead(
         outerEllipseSemiX, outerEllipseSemiY, maxZ - minZ, innerEllipseCenterX, innerEllipseCenterY, minZ)
 
     '''12. edge points on outer ellipse'''

@@ -9,8 +9,8 @@ from skimage.draw import ellipsoid
 
 
 def saveEllipsoidObj(objPath, verts, faces):
-    os.makedirs(objPath) if not os.path.exists(
-        os.path.dirname(objPath)[0]) else False
+    os.makedirs(os.path.dirname(objPath)) if not os.path.exists(
+        os.path.dirname(objPath)) else False
     objFile = open(objPath, 'w')
     objLines = []
     for vert in verts:
@@ -34,17 +34,19 @@ def ellipsoidHead(semiX, semiY, semiZ, centerX, centerY, centerZ):
     ellipsoidHeadXY = []
     ellipsoidHeadXZ = []
     ellipsoidHeadYZ = []
+    ellipsoidHeadXYZ = []
     for vert in verts:
         ellipsoidHeadVLines.append('{} {} {} {} {} {} {}'.format(
             'v', vert[0], vert[1], vert[2], 0, 0, 0))
         ellipsoidHeadXY.append((vert[0], vert[1]))
         ellipsoidHeadXZ.append((vert[0], vert[2]))
         ellipsoidHeadYZ.append((vert[1], vert[2]))
+        ellipsoidHeadXYZ.append((vert[0], vert[1], vert[2]))
     objPath = '../../output/{}/ellipsoid/ellipsoid.obj'.format(
         time.strftime('%m%d', time.localtime()))
     saveEllipsoidObj(objPath, verts, faces)
 
-    return ellipsoidHeadVLines, ellipsoidHeadXY, ellipsoidHeadXZ, ellipsoidHeadYZ
+    return ellipsoidHeadVLines, ellipsoidHeadXY, ellipsoidHeadXZ, ellipsoidHeadYZ, ellipsoidHeadXYZ
 
 
 def mainEllipseHead():
